@@ -1,0 +1,128 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Manage Payments - UrbanStay{% endblock %}
+
+{% block body %}
+<style>
+    /* UrbanStay Financial Theme */
+    .text-grandoria { color: #5c3d2e !important; }
+    .bg-grandoria { background-color: #5c3d2e !important; color: white !important; }
+    
+    .payment-card {
+        background-color: #faf9f6;
+        border-radius: 12px;
+        border: 1px solid #e0d9b5;
+        overflow: hidden;
+    }
+
+    .table-grandoria thead {
+        background-color: #5c3d2e;
+        color: #ffffff;
+    }
+
+    .amount-badge {
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: bold;
+        color: #2d4628; 
+        background: #e8f5e9;
+        padding: 5px 12px;
+        border-radius: 6px;
+        border: 1px solid #c8e6c9;
+    }
+
+    .status-paid { color: #2d4628; background-color: #c8e6c9; }
+    .status-pending { color: #5c3d2e; background-color: #f4f1de; border: 1px solid #e0d9b5; }
+    .status-failed { color: #721c24; background-color: #f8d7da; }
+
+    .method-icon {
+        width: 32px;
+        text-align: center;
+        color: #b68d40;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold text-grandoria">
+            <i class="bi bi-credit-card-2-back-fill me-2"></i>Payments History
+        </h1>
+        <div class="text-muted">
+            <i class="bi bi-shield-lock-fill"></i> Secure Transactions
+        </div>
+    </div>
+
+    <div class="payment-card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-grandoria align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Transaction ID</th>
+                        <th>Client</th>
+                        <th>Reservation</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in payments %}
+                        <tr style="border-bottom: 1px solid #e0d9b5;">
+                            <td class="ps-4 text-muted small">#{{ p.id }}</td>
+                            
+                            <td>
+                                <div class="fw-bold text-grandoria">{{ p.reservation.user.email }}</div>
+                            </td>
+
+                            <td>
+                                {# FIXED: Link removed to prevent RouteNotFoundException #}
+                                <span style="color: #b68d40;">
+                                    <i class="bi bi-receipt me-1"></i>Res #{{ p.reservation.id }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="method-icon">
+                                    {% if p.methode|lower == 'carte' or p.methode|lower == 'credit card' %}
+                                        <i class="bi bi-credit-card"></i>
+                                    {% elseif p.methode|lower == 'paypal' %}
+                                        <i class="bi bi-paypal"></i>
+                                    {% else %}
+                                        <i class="bi bi-cash-stack"></i>
+                                    {% endif %}
+                                </span>
+                                <span class="text-capitalize small">{{ p.methode }}</span>
+                            </td>
+
+                            <td>
+                                {% set statusClass = 'status-pending' %}
+                                {% if p.statut|lower in ['payé', 'paid', 'completed'] %}
+                                    {% set statusClass = 'status-paid' %}
+                                {% elseif p.statut|lower in ['failed', 'échoué'] %}
+                                    {% set statusClass = 'status-failed' %}
+                                {% endif %}
+                                
+                                <span class="badge {{ statusClass }} px-3 py-2 rounded-pill text-uppercase" style="font-size: 0.7rem;">
+                                    {{ p.statut }}
+                                </span>
+                            </td>
+
+                            <td class="text-end pe-4">
+                                <span class="amount-badge">
+                                    {{ p.montant|number_format(2, '.', ',') }} €
+                                </span>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5">
+                                <i class="bi bi-wallet2 fs-1 text-muted d-block mb-2"></i>
+                                <p class="text-muted">No transaction records found.</p>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Notre Équipe - UrbanStay{% endblock %}
+
+{% block body %}
+<style>
+    /* Couleurs personnalisées pour assortir au template UrbanStay */
+    .text-grandoria { color: #5c3d2e !important; } /* Marron foncé */
+    .bg-grandoria { background-color: #5c3d2e !important; color: white !important; }
+    .btn-grandoria { background-color: #b68d40 !important; color: white !important; border: none; } /* Doré/Beige foncé */
+    .btn-grandoria:hover { background-color: #a07a35 !important; color: white; }
+    .badge-poste { background-color: #f4f1de !important; color: #5c3d2e !important; border: 1px solid #e0d9b5; }
+</style>
+
+<div class="container mt-5">
+    {# En-tête avec bouton d'ajout assorti #}
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h1 class="fw-bold text-grandoria"><i class="bi bi-people-fill"></i> Notre Équipe</h1>
+        <a href="{{ path('app_staff_new') }}" class="btn btn-grandoria shadow-sm">
+            <i class="bi bi-plus-circle"></i> Ajouter un membre
+        </a>
+    </div>
+
+    <div class="row gy-4">
+        {% for s in staff %}
+            <div class="col-md-4 col-sm-6">
+                <div class="card h-100 border-0 shadow-sm text-center p-3" style="background-color: #faf9f6;">
+                    {# Icône de profil en marron #}
+                    <div class="card-img-top mt-3">
+                        <i class="bi bi-person-badge text-grandoria" style="font-size: 4rem;"></i>
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold text-grandoria">{{ s.nom }}</h5>
+                        {# Badge beige clair #}
+                        <p class="badge badge-poste mb-3">{{ s.poste }}</p>
+                        
+                        <hr class="w-25 mx-auto" style="color: #b68d40;">
+
+                        <p class="card-text mt-3">
+                            <i class="bi bi-telephone-fill text-grandoria me-2"></i>
+                            <strong class="text-grandoria">Contact :</strong> {{ s.numtel }}
+                        </p>
+
+                        {# Boutons d'action assortis #}
+                        <div class="d-flex justify-content-center gap-2 mt-4">
+                            <a href="{{ path('app_staff_show', {'id': s.id}) }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-eye"></i> Voir
+                            </a>
+                            <a href="{{ path('app_staff_edit', {'id': s.id}) }}" class="btn btn-grandoria btn-sm">
+                                <i class="bi bi-pencil-square"></i> Modifier
+                            </a>
+
+                            {# --- NEW DELETE BUTTON ADDED HERE --- #}
+                            <form method="post" action="{{ path('app_staff_delete', {'id': s.id}) }}" onsubmit="return confirm('Supprimer ce membre ?');" style="display:inline-block;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ s.id) }}">
+                                <button class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash"></i> Supprimer
+                                </button>
+                            </form>
+                            {# ------------------------------------ #}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-light border shadow-sm">
+                    <i class="bi bi-exclamation-circle fs-1 text-muted"></i>
+                    <p class="mt-3 fs-5 text-grandoria">Aucun membre du personnel enregistré.</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

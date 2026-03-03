@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+{% block title %}Edit Property{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Edit Property</h1>
+
+        {# --- ROOM IMAGES SECTION (NO CHANGE HERE) --- #}
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3>Property Images</h3>
+                <a href="{{ path('app_image_upload', {'entityType': 'property', 'entityId': property.id}) }}" class="btn btn-sm btn-success">
+                    <i class="bi bi-plus-circle"></i> Add New Image
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for image in property.images %}
+                        <div class="col-md-3 mb-3">
+                            <div class="card position-relative shadow-sm">
+                                <img src="{{ asset('uploads/images/' ~ image.filename) }}" class="card-img-top img-fluid" style="height: 150px; object-fit: cover;">
+
+                                {# DELETE FORM - USING data-bs- attributes to trigger the modal (NO CHANGE TO BUTTON FUNCTIONALITY) #}
+                                <form method="post" id="delete-image-form-{{ image.id }}" 
+                                      class="position-absolute top-0 end-0 m-1" style="z-index: 10;">
+                                    
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ image.id) }}">
+                                    
+                                    <button type="button" 
+                                            class="btn btn-danger btn-sm p-1 delete-image-btn" 
+                                            title="Delete Image"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#confirmDeleteModal"
+                                            data-delete-url="{{ path('app_image_delete', {'id': image.id}) }}" 
+                                            data-item-name="Image: {{ image.filename }}" 
+                                            style="--bs-btn-padding-y: .1rem; --bs-btn-padding-x: .4rem; --bs-btn-font-size: .75rem;">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No images uploaded for this property yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        {# --- REST OF THE PAGE CONTENT (NO CHANGE) --- #}
+        {{ include('property/_form.html.twig', {'button_label': 'Update'}) }}
+        <div class="mt-4">
+            <a href="{{ path('app_property_index') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+        {{ include('property/_delete_form.html.twig') }}
+    </div>
+
+    {# ---------------------------------------------------------------- #}
+    {# 🌸 CUTE & SOFT BOOTSTRAP CONFIRMATION MODAL STRUCTURE 🌸 #}
+    {# ---------------------------------------------------------------- #}
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-pastel shadow-lg">
+          
+          {# MODAL HEADER: Pastel Pink Background, Soft Red Text #}
+          <div class="modal-header bg-pastel-pink border-0">
+            <h5 class="modal-title text-pastel-red" id="confirmDeleteModalLabel">
+                <i class="bi bi-heart-fill me-2"></i> Are you sure, sweetie?
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          
+          {# MODAL BODY: Gentle Warning #}
+          <div class="modal-body py-4">
+            <p class="lead text-muted">Do you really want to remove the item: <br><strong class="text-pastel-red" id="modal-item-name"></strong>?</p>
+            <div class="p-3 mt-3 bg-light rounded border-danger border-start border-5">
+                 <p class="mb-0 text-danger small fst-italic">This cannot be magically undone! Be thoughtful!</p>
+            </div>
+          </div>
+          
+          {# MODAL FOOTER: Soft Buttons #}
+          <div class="modal-footer justify-content-between border-top-0">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                <i class="bi bi-arrow-left-circle me-1"></i> Oops, outline-secondary!
+            </button>
+            <button type="button" class="btn btn-soft-red" id="confirmDeleteButton">
+                <i class="bi bi-trash-fill me-1"></i> Yes, delete it me!
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {# ---------------------------------------------------------------- #}
+{% endblock %}
+
+{# ---------------------------------------------------------------- #}
+{# JAVASCRIPT BLOCK (NO CHANGE NEEDED) #}
+{# ---------------------------------------------------------------- #}
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script>
+        // Get the Bootstrap Modal element
+        const confirmDeleteModal = document.getElementById('confirmDeleteModal');
+        // Get the main confirmation button inside the modal
+        const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+        // Get the strong tag where the item name is displayed
+        const modalItemName = document.getElementById('modal-item-name');
+        
+        // This is triggered when the modal is about to be shown
+        confirmDeleteModal.addEventListener('show.bs.modal', function (event) {
+            // Button that triggered the modal
+            const button = event.relatedTarget; 
+            
+            // Extract info from data-bs- attributes
+            const deleteUrl = button.getAttribute('data-delete-url');
+            const itemName = button.getAttribute('data-item-name');
+            
+            // Get the parent form of the button
+            const parentForm = button.closest('form');
+            
+            // Update the modal content
+            modalItemName.textContent = itemName;
+            
+            // Set up the click handler for the red "Delete" button inside the modal
+            confirmDeleteButton.onclick = function() {
+                // IMPORTANT: Change the form action to the correct delete URL
+                parentForm.action = deleteUrl;
+                
+                // Submit the form
+                parentForm.submit();
+                
+                // Hide the modal (optional, as the page will reload)
+                const modal = bootstrap.Modal.getInstance(confirmDeleteModal);
+                modal.hide();
+            };
+        });
+    </script>
+{% endblock %}

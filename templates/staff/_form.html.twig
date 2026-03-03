@@ -1,0 +1,60 @@
+{# templates/staff/_form.html.twig #}
+
+<style>
+    /* Couleurs personnalisées UrbanStay */
+    .text-grandoria { color: #5c3d2e !important; }
+    .btn-grandoria { background-color: #b68d40 !important; color: white !important; border: none; transition: 0.3s; }
+    .btn-grandoria:hover { background-color: #a07a35 !important; }
+    .form-control:focus { border-color: #b68d40; box-shadow: 0 0 0 0.25 margin-left: rgba(182, 141, 64, 0.25); }
+    .input-group-text { background-color: #f4f1de; color: #5c3d2e; border-color: #dee2e6; }
+</style>
+
+{{ form_start(form) }}
+    <div class="row gy-4 p-4 shadow-sm border rounded bg-white">
+        
+        <div class="col-12 text-center mb-2">
+            <div class="display-4 text-grandoria">
+                <i class="bi bi-person-bounding-box"></i>
+            </div>
+            <h3 class="fw-bold text-grandoria">Informations du Personnel</h3>
+            <p class="text-muted">Gérez les détails du membre de l'équipe UrbanStay.</p>
+        </div>
+
+        <hr style="color: #b68d40; opacity: 0.5;">
+
+        <div class="col-md-6">
+            <label class="form-label fw-semibold text-grandoria">
+                <i class="bi bi-person-fill me-1"></i> Nom Complet
+            </label>
+            {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Sarah Johnson'}}) }}
+            <div class="text-danger small">{{ form_errors(form.nom) }}</div>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label fw-semibold text-grandoria">
+                <i class="bi bi-briefcase-fill me-1"></i> Poste / Fonction
+            </label>
+            {{ form_widget(form.poste, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Manager'}}) }}
+            <div class="text-danger small">{{ form_errors(form.poste) }}</div>
+        </div>
+
+        <div class="col-12">
+            <label class="form-label fw-semibold text-grandoria">
+                <i class="bi bi-telephone-fill me-1"></i> Numéro de Téléphone
+            </label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-plus"></i></span>
+                {{ form_widget(form.numtel, {'attr': {'class': 'form-control', 'placeholder': '216 -- --- ---'}}) }}
+            </div>
+            <div class="text-danger small">{{ form_errors(form.numtel) }}</div>
+        </div>
+
+        <div class="col-12 text-center mt-4">
+            <button type="submit" class="btn btn-grandoria btn-lg px-5 shadow-sm">
+                <i class="bi bi-check2-circle me-2"></i> {{ button_label|default('Enregistrer le profil') }}
+            </button>
+        </div>
+
+    </div>
+{{ form_end(form) }}
+

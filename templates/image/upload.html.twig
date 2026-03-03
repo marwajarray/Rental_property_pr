@@ -1,0 +1,148 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Upload{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --soft-cream: #fdfaf5;
+            --border-beige: #e3d5ca;
+            --text-muted-brown: #7f6d5e;
+            --accent-latte: #bca38f;
+        }
+
+        /* Smaller, more compact card */
+        .upload-container {
+            max-width: 500px; /* Reduced width */
+            margin: 40px auto;
+        }
+
+        .mini-upload-card {
+            border: 1px solid var(--border-beige);
+            border-radius: 12px;
+            background-color: white;
+            padding: 25px;
+        }
+
+        .mini-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .mini-header h4 {
+            font-size: 1.2rem;
+            color: var(--text-muted-brown);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        /* Subtle file input area */
+        .compact-drop-zone {
+            background-color: var(--soft-cream);
+            border: 1px dashed var(--border-beige);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Small Latte Button */
+        .btn-latte {
+            background-color: var(--accent-latte);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+
+        .btn-latte:hover {
+            background-color: var(--text-muted-brown);
+            color: white;
+        }
+
+        .btn-cancel {
+            font-size: 0.85rem;
+            color: #999;
+            text-decoration: none;
+        }
+        
+        .btn-cancel:hover { color: #666; }
+
+        /* Hide default Symfony labels for a cleaner look */
+        .compact-drop-zone label {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <main class="main">
+        <div class="container">
+            {# --- FLASH MESSAGES --- #}
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+
+            <div class="upload-container">
+                <div class="mini-upload-card shadow-sm">
+                    
+                    <div class="mini-header">
+                        <i class="bi bi-image text-beige fs-3"></i>
+                        <h4>Add Photo</h4>
+                        <p class="small text-muted mb-0">
+                            {% if entityType == 'property' %}
+                                Property: {{ parentEntity.number }}
+                            {% elseif entityType == 'service' %}
+                                Service: {{ parentEntity.nom }}
+                            {% elseif entityType == 'event' %}
+                                Event: {{ parentEntity.name }}
+                            {% else %}
+                                {{ entityType|capitalize }}: {{ parentEntity.id }}
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+                        
+                        <div class="compact-drop-zone">
+                            <i class="bi bi-plus-lg text-muted"></i>
+                            <div class="mt-2">
+                                {# Render only the widget for a cleaner UI #}
+                                {{ form_widget(form.imageFile, {'attr': {'class': 'form-control form-control-sm'}}) }}
+                            </div>
+                            {{ form_errors(form.imageFile) }}
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            {% set back_route = 'app_' ~ entityType ~ '_show' %}
+                            <a href="{{ path(back_route, {'id': parentEntity.id}) }}" class="btn-cancel">
+                                <i class="bi bi-chevron-left"></i> Cancel
+                            </a>
+                            
+                            <button type="submit" class="btn-latte">
+                                <i class="bi bi-upload me-1"></i> Upload
+                            </button>
+                        </div>
+                        
+                    {{ form_end(form) }}
+                </div>
+                
+                <p class="text-center mt-3 small text-muted" style="font-size: 0.75rem;">
+                    Max size: 2MB • Format: JPG, PNG, WebP
+                </p>
+            </div>
+        </div>
+    </main>
+{% endblock %}

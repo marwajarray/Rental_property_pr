@@ -1,0 +1,152 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil Personnel - UrbanStay{% endblock %}
+
+{% block body %}
+<style>
+    /* Section marron identique à "Create New Property" */
+    .page-header-staff {
+        background-color: #5c3d2e; 
+        color: white;
+        padding: 40px 0 60px 0;
+    }
+    .page-header-staff h1 {
+        font-weight: bold;
+        padding-left: 2rem;
+    }
+
+    /* Carte de profil centrée et surélevée */
+    .profile-card {
+        max-width: 650px;
+        /* Marge négative de -30px pour ne pas cacher le titre marron */
+        margin: -30px auto 50px auto; 
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        border: none;
+        overflow: hidden;
+    }
+
+    .profile-banner {
+        background-color: #f4f1de; /* Beige clair */
+        height: 100px;
+        border-bottom: 2px solid #b68d40;
+    }
+
+    .profile-avatar-wrapper {
+        margin-top: -50px;
+        text-align: center;
+    }
+
+    .profile-avatar-circle {
+        width: 100px;
+        height: 100px;
+        background: white;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: #5c3d2e;
+        border: 4px solid white;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .info-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .info-label {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        color: #b68d40; /* Couleur dorée */
+        font-weight: bold;
+        letter-spacing: 1px;
+    }
+
+    .info-data {
+        font-size: 1.2rem;
+        color: #5c3d2e; /* Marron au lieu de noir */
+        font-weight: 500;
+    }
+
+    .btn-grandoria {
+        background-color: #b68d40;
+        color: white !important;
+        border: none;
+        padding: 10px 30px;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: 0.3s;
+        text-decoration: none;
+    }
+
+    .btn-grandoria:hover {
+        background-color: #a07a35;
+    }
+
+    .text-grandoria {
+        color: #5c3d2e !important;
+    }
+</style>
+
+<div class="page-header-staff">
+    <div class="container">
+        <h1>Staff Profile</h1>
+    </div>
+</div>
+
+<div class="container">
+    <div class="card profile-card">
+        <div class="profile-banner"></div>
+        <div class="profile-avatar-wrapper">
+            <div class="profile-avatar-circle">
+                <i class="bi bi-person-circle"></i>
+            </div>
+        </div>
+
+        <div class="card-body p-5 text-center">
+            <h2 class="fw-bold mb-1 text-grandoria">{{ staff.nom }}</h2>
+            
+            {# Badge Poste : Marron avec bordure dorée (remplace le noir) #}
+            <p class="badge px-3 py-2 mb-4" style="background-color: #5c3d2e; color: #f4f1de; border: 1px solid #b68d40;">
+                <i class="bi bi-briefcase me-1"></i> {{ staff.poste }}
+            </p>
+
+            <div class="row g-4 text-start mt-2">
+                <div class="col-md-6 border-end">
+                    <div class="info-group text-center text-md-start ps-md-4">
+                        <div class="info-label">ID PERSONNEL</div>
+                        <div class="info-data">#{{ staff.id }}</div>
+                    </div>
+                </div>
+                <div class="col-md-6 ps-md-4">
+                    <div class="info-group text-center text-md-start">
+                        <div class="info-label">CONTACT</div>
+                        <div class="info-data">
+                            <i class="bi bi-telephone-fill text-grandoria me-2"></i>{{ staff.numtel }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4" style="opacity: 0.1; color: #b68d40;">
+
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{{ path('app_staff_edit', {'id': staff.id}) }}" class="btn btn-grandoria shadow-sm">
+                    <i class="bi bi-pencil-square me-2"></i>Edit Profile
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {# Navigation de retour et suppression centrées #}
+    <div class="d-flex justify-content-center align-items-center gap-4 mb-5">
+        <a href="{{ path('app_staff_index') }}" class="text-decoration-none text-muted">
+            <i class="bi bi-arrow-left me-1"></i>Back to list
+        </a>
+        <div class="vr" style="height: 20px; color: #b68d40;"></div>
+        {{ include('staff/_delete_form.html.twig') }}
+    </div>
+</div>
+{% endblock %}

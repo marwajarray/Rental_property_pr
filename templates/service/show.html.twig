@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Service: {{ service.nom }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Soft Beige Overrides - Consistent with Events */
+        :root {
+            --accent-beige: #d2b48c;
+            --soft-beige: #f5f5dc;
+            --dark-beige: #8b7355;
+        }
+        .btn-beige {
+            background-color: var(--accent-beige);
+            color: white;
+            border: none;
+            transition: 0.3s;
+        }
+        .btn-beige:hover {
+            background-color: var(--dark-beige);
+            color: white;
+        }
+        .btn-outline-beige {
+            border: 2px solid var(--accent-beige);
+            color: var(--dark-beige);
+            transition: 0.3s;
+        }
+        .btn-outline-beige:hover {
+            background-color: var(--accent-beige);
+            color: white;
+        }
+        .text-beige { color: var(--dark-beige); }
+        
+        .sticky-sidebar {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 120px; 
+            z-index: 10;
+        }
+        .category-badge {
+            background-color: #f8f1e7;
+            color: var(--dark-beige);
+            border: 1px solid var(--accent-beige);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<main class="main">
+     <!-- Page Title -->
+    <div class="page-title light-background">
+      <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1 class="mb-2 mb-lg-0">Service</h1>
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href="{{ path('app_home') }}">Home</a></li>
+            <li><a href="{{ path('app_service_index') }}">Service</a></li>
+            <li class="current">Details</li>
+          </ol>
+        </nav>
+      </div>
+    </div><!-- End Page Title -->
+
+
+    <section class="section mt-5">
+        <div class="container">
+            <div class="row gy-5">
+                
+                {# --- LEFT COLUMN: SERVICE INFO --- #}
+                <div class="col-lg-8">
+                    <div class="card shadow-sm border-0 p-4 mb-5" style="border-radius: 15px;">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h2 class="text-beige fw-bold mb-1">{{ service.nom }}</h2>
+                                <span class="badge category-badge text-uppercase small">{{ service.category }}</span>
+                            </div>
+                            <span class="badge rounded-pill px-4 py-2" style="background-color: var(--accent-beige); font-size: 1.1rem;">
+                                ${{ service.price }}
+                            </span>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small text-uppercase fw-bold d-block">Schedule</label>
+                                <span class="fs-5"><i class="bi bi-clock text-beige me-2"></i> {{ service.servtime }}</span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small text-uppercase fw-bold d-block">Location</label>
+                                <span class="fs-5"><i class="bi bi-geo-alt text-beige me-2"></i> {{ service.location }}</span>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-3" style="background-color: #faf9f6; border-left: 5px solid var(--accent-beige);">
+                            <h5 class="fw-bold text-beige">Service Description</h5>
+                            <p class="mb-0 text-muted" style="white-space: pre-line; line-height: 1.8;">{{ service.description }}</p>
+                        </div>
+                    </div>
+
+                    {# --- GALLERY SECTION --- #}
+                    <div class="gallery-container">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="fw-bold text-beige"><i class="bi bi-images me-2"></i> Service Photos</h4>
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('app_image_upload', {'entityType': 'service', 'entityId': service.id}) }}" class="btn btn-outline-beige btn-sm">
+                                <i class="bi bi-plus-circle me-1"></i> Add Photos
+                            </a>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="row gy-4">
+                            {% for image in service.images %}
+                                <div class="col-md-4">
+                                    <div class="amenity-card shadow-sm border-0">
+                                        <div class="amenity-image">
+                                            <img src="{{ asset('uploads/images/' ~ image.filename) }}" class="img-fluid" alt="Service Image">
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="col-12 text-center py-5 border rounded-3 bg-light">
+                                    <p class="text-muted mb-0">No images yet for this service.</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                {# --- RIGHT COLUMN: STICKY MANAGE SIDEBAR --- #}
+                <div class="col-lg-4">
+                    <div class="sticky-sidebar">
+                        {% if is_granted('ROLE_ADMIN') %}
+                        <div class="card shadow-sm border-0 p-4" style="border-radius: 15px;">
+                            <h5 class="fw-bold mb-4 border-bottom pb-2">Service Management</h5>
+                            
+                            <div class="d-grid gap-3">
+                                <a href="{{ path('app_service_edit', {'id': service.id}) }}" class="btn btn-beige py-2 fw-bold">
+                                    <i class="bi bi-pencil-square me-2"></i> Edit Service
+                                </a>
+                                
+                                <a href="{{ path('app_service_index') }}" class="btn btn-outline-secondary py-2">
+                                    <i class="bi bi-arrow-left me-2"></i> Back to List
+                                </a>
+
+                                <div class="mt-3 pt-3 border-top">
+                                    {{ include('service/_delete_form.html.twig') }}
+                                </div>
+                            </div>
+
+                        </div>
+                        {% endif %}
+
+                        <div class="mt-4 p-3 rounded" style="background-color: var(--soft-beige);">
+                            <small class="fw-bold text-beige d-block mb-1">
+                                <i class="bi bi-info-circle-fill me-1"></i> Quick Info
+                            </small>
+                            <p class="small text-muted mb-0">
+                                Total Reservations: <strong>{{ service.reservations|length }}</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %}

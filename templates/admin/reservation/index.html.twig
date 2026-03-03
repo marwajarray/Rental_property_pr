@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Manage Reservations - UrbanStay{% endblock %}
+
+{% block body %}
+<style>
+    /* UrbanStay Theme Colors */
+    .text-grandoria { color: #5c3d2e !important; }
+    .bg-grandoria { background-color: #5c3d2e !important; color: white !important; }
+    .border-grandoria { border-color: #e0d9b5 !important; }
+    
+    /* Table Styling */
+    .table-container {
+        background-color: #faf9f6;
+        border-radius: 15px;
+        padding: 20px;
+        border: 1px solid #e0d9b5;
+    }
+    .custom-table thead {
+        background-color: #5c3d2e;
+        color: #ffffff;
+    }
+    .custom-table thead th {
+        border: none;
+        padding: 15px;
+    }
+    .custom-table tbody tr {
+        border-bottom: 1px solid #e0d9b5;
+        transition: 0.3s;
+    }
+    .custom-table tbody tr:hover {
+        background-color: #f4f1de;
+    }
+
+    /* Status Badges */
+    .status-confirmed { background-color: #b68d40; color: white; }
+    .status-pending { background-color: #d1c7a7; color: #5c3d2e; }
+    .status-cancelled { background-color: #a34e4e; color: white; }
+    
+    .price-tag {
+        font-weight: bold;
+        color: #5c3d2e;
+        background: #e0d9b5;
+        padding: 4px 10px;
+        border-radius: 8px;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="fw-bold text-grandoria">
+            <i class="bi bi-calendar-check-fill me-2"></i>Manage Reservations
+        </h1>
+        <span class="badge bg-grandoria px-3 py-2 rounded-pill">
+            {{ reservations|length }} Total
+        </span>
+    </div>
+
+    <div class="table-container shadow-sm">
+        <div class="table-responsive">
+            <table class="table custom-table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="rounded-start">#ID</th>
+                        <th>Client</th>
+                        <th>Property Details</th>
+                        <th>Stay Period</th>
+                        <th>Status</th>
+                        <th class="text-end rounded-end">Total Amount</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for r in reservations %}
+                    <tr>
+                        <td class="fw-bold text-muted">{{ r.id }}</td>
+
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-person-circle fs-4 text-grandoria me-2"></i>
+                                <span>{{ r.user ? r.user.email : 'Guest' }}</span>
+                            </div>
+                        </td>
+
+                        <td>
+                            {% if r.property is not null and r.property.id is not null and r.property.id > 0 %}
+                                <span class="badge badge-poste border text-grandoria" style="background-color: #f4f1de;">
+                                    <i class="bi bi-door-closed me-1"></i> Property #{{ r.property.number }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted fst-italic">Not assigned</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <small class="text-muted d-block">
+                                <i class="bi bi-calendar3 me-1"></i> {{ r.dateArrivee|date('d M Y') }}
+                            </small>
+                            <small class="text-muted d-block">
+                                <i class="bi bi-arrow-right me-1"></i> {{ r.dateDepart|date('d M Y') }}
+                            </small>
+                        </td>
+
+                        <td>
+                            {% set statusClass = 'bg-secondary' %}
+                            {% if r.statut|lower == 'confirmed' or r.statut|lower == 'confirmé' %}
+                                {% set statusClass = 'status-confirmed' %}
+                            {% elseif r.statut|lower == 'pending' or r.statut|lower == 'en attente' %}
+                                {% set statusClass = 'status-pending' %}
+                            {% endif %}
+                            
+                            <span class="badge {{ statusClass }} text-uppercase px-3">
+                                {{ r.statut }}
+                            </span>
+                        </td>
+
+                        <td class="text-end">
+                            <span class="price-tag">
+                                {{ r.totalPrice ? r.totalPrice ~ ' €' : '—' }}
+                            </span>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5">
+                            <i class="bi bi-inbox fs-1 text-muted d-block mb-2"></i>
+                            <p class="text-muted">No reservations found in the system.</p>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

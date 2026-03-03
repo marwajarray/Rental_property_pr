@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Personnel - UrbanStay{% endblock %}
+
+{% block body %}
+<style>
+    .page-header-staff {
+        background-color: #5c3d2e; /* Marron UrbanStay */
+        color: white;
+        padding: 40px 0 60px 0; /* Padding ajusté */
+    }
+    .page-header-staff h1 {
+        font-weight: bold;
+        padding-left: 2rem;
+        margin-bottom: 0;
+    }
+    .form-container-overlap {
+        max-width: 900px;
+        /* On réduit la marge négative ici pour ne pas masquer le marron */
+        margin: -30px auto 50px auto; 
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        position: relative;
+        z-index: 10;
+    }
+</style>
+
+<div class="page-header-staff">
+    <div class="container">
+        <h1>Edit Staff</h1>
+    </div>
+</div>
+
+<div class="container">
+    <div class="form-container-overlap">
+        {# On appelle le formulaire ici #}
+        {{ include('staff/_form.html.twig', {'button_label': 'Update'}) }}
+    </div>
+
+    <div class="d-flex justify-content-center gap-4 mt-4 mb-5">
+        <a href="{{ path('app_staff_index') }}" class="text-muted text-decoration-none pt-2">
+            <i class="bi bi-arrow-left"></i> Back to list
+        </a>
+        {{ include('staff/_delete_form.html.twig') }}
+    </div>
+</div>
+{% endblock %}

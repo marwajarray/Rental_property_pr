@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Property Details - UrbanStay Luxury Apartment Rental{% endblock %}
+
+{% block body %}
+
+  <main class="main">
+
+     <!-- Page Title -->
+    <div class="page-title light-background">
+      <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1 class="mb-2 mb-lg-0">Gallery</h1>
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href="{{ path('app_home') }}">Home</a></li>
+            <li class="current">Gallery</li>
+          </ol>
+        </nav>
+      </div>
+    </div><!-- End Page Title -->
+
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery section">
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="isotope-layout" data-default-filter="*" data-layout="masonry" data-sort="original-order">
+          <ul class="apartment rental-filters isotope-filters" data-aos="fade-up" data-aos-delay="100">
+            <li data-filter="*" class="filter-active">All</li>
+            <li data-filter=".filter-properties">Properties</li>
+            <li data-filter=".filter-services">Services</li>
+            <li data-filter=".filter-events">Events</li>
+          </ul><!-- End Apartment Rental Gallery Filters -->
+
+          <div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200">
+            {% for image in images %}
+              {% set filterClass = '' %}
+              {% set title = image.filename %}
+              {% set alt = image.filename %}
+              {% if image.property %}
+                {% set filterClass = 'filter-properties' %}
+                {% set title = 'Property: ' ~ image.property.type ~ ' ' ~ image.property.number %}
+                {% set alt = 'Property image' %}
+              {% elseif image.service %}
+                {% set filterClass = 'filter-services' %}
+                {% set title = 'Service: ' ~ image.service.nom %}
+                {% set alt = 'Service image' %}
+              {% elseif image.event %}
+                {% set filterClass = 'filter-events' %}
+                {% set title = 'Event: ' ~ image.event.name %}
+                {% set alt = 'Event image' %}
+              {% endif %}
+              <div class="col-lg-4 col-md-6 gallery-item isotope-item {{ filterClass }}">
+                <div class="gallery-wrapper">
+                  <img src="{{ asset('uploads/images/' ~ image.filename) }}" class="img-fluid" alt="{{ alt }}">
+                  <div class="gallery-overlay">
+                    <a href="{{ asset('uploads/images/' ~ image.filename) }}" class="glightbox" title="{{ title }}">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                  </div>
+                </div>
+              </div><!-- End Gallery Item -->
+            {% endfor %}
+          </div><!-- End Apartment Rental Gallery Items Container -->
+
+        </div>
+
+      </div>
+
+    </section><!-- /Gallery Section -->
+
+  </main>
+{% endblock %}
+

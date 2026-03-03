@@ -1,0 +1,212 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Checkout: Property {{ property.number }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --royal-blue: #1a252f;
+            --gold-accent: #c5a059;
+            --soft-gray: #f8f9fa;
+        }
+
+        .checkout-container {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
+        }
+
+        .summary-header {
+            background-color: var(--royal-blue);
+            color: white;
+            padding: 1.5rem;
+            border-bottom: 4px solid var(--gold-accent);
+        }
+
+        .property-img-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            min-height: 200px;
+        }
+
+        .payment-method-card {
+            border: 2px solid #eee;
+            border-radius: 10px;
+            padding: 1.2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .form-check-input:checked + .payment-method-card {
+            border-color: var(--gold-accent);
+            background-color: #fcf9f2;
+        }
+
+        .price-badge {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--royal-blue);
+        }
+
+        .btn-checkout {
+            background-color: var(--royal-blue);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .btn-checkout:hover {
+            background-color: var(--gold-accent);
+            color: white;
+        }
+
+        .info-label {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #888;
+            letter-spacing: 0.5px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<main class="main">
+    {# --- TOP HEADER --- #}
+    <div class="page-title dark-background">
+        <div class="container">
+            <h1>Finalize Booking</h1>
+            <nav class="breadcrumbs">
+                <ol>
+                    <li><a href="{{ path('app_home') }}">Home</a></li>
+                    <li class="current">Secure Payment</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <section class="section py-5">
+        <div class="container">
+            <div class="row g-5">
+                
+                {# --- LEFT SIDE: ROOM SUMMARY --- #}
+                <div class="col-lg-7">
+                    <h4 class="fw-bold mb-4 text-dark">Booking Summary</h4>
+                    <div class="checkout-container">
+                        <div class="row g-0">
+                            <div class="col-md-5">
+                                {% if property.images is not empty %}
+                                    <img src="{{ asset('uploads/images/' ~ property.images.first.filename) }}" class="property-img-preview" alt="Property">
+                                {% else %}
+                                    <img src="{{ asset('assets/img/apartment rental/placeholder-property.webp') }}" class="property-img-preview" alt="Placeholder">
+                                {% endif %}
+                            </div>
+                            <div class="col-md-7 p-4">
+                                <span class="badge bg-dark mb-2">Property {{ property.number }}</span>
+                                <h3 class="fw-bold text-dark">Luxury Suite</h3>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <p class="info-label mb-0">Check-In</p>
+                                        <p class="fw-bold">{{ reservation.dateArrivee|date('M d, Y') }}</p>
+                                    </div>
+                                    <div class="col-6 mb-3">
+                                        <p class="info-label mb-0">Check-Out</p>
+                                        <p class="fw-bold">{{ reservation.dateDepart|date('M d, Y') }}</p>
+                                    </div>
+                                    <div class="col-12">
+                                        <p class="info-label mb-0">Rate per night</p>
+                                        <p class="fw-bold text-success">${{ property.price }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-light p-4 d-flex justify-content-between align-items-center border-top">
+                            <h5 class="mb-0 fw-bold">Total Amount Due</h5>
+                            <span class="price-badge text-primary">${{ total }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {# --- RIGHT SIDE: PAYMENT METHOD --- #}
+                <div class="col-lg-5">
+                    <div class="card border-0 shadow-sm p-4" style="border-radius: 15px;">
+                        <h4 class="fw-bold mb-4 text-dark">Payment Details</h4>
+                        <form method="post">
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('payment') }}">
+                            <p class="text-muted small mb-3">Please select your preferred payment method:</p>
+
+                            <label class="w-100">
+                                <input type="radio" name="method" id="pay_cash" value="cash" class="form-check-input d-none" required>
+                                <div class="payment-method-card">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-wallet2 fs-3 me-3 text-secondary"></i>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold">Pay at Apartment Rental</h6>
+                                            <small class="text-muted">Cash or Card on arrival</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="w-100">
+                                <input type="radio" name="method" id="pay_card" value="card" class="form-check-input d-none">
+                                <div class="payment-method-card">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-credit-card-2-front fs-3 me-3 text-secondary"></i>
+                                        <div>
+                                            <h6 class="mb-0 fw-bold">Credit / Debit Card</h6>
+                                            <small class="text-muted">Secure online payment</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+
+                            {# --- WARNINGS --- #}
+                            <div id="cash-warning" class="alert alert-warning border-0 mt-3" style="display: none; border-left: 4px solid #ffc107; border-radius: 8px;">
+                                <div class="d-flex">
+                                    <i class="bi bi-clock-history me-2"></i>
+                                    <small><strong>Policy:</strong> Reservation held for 2 hours past check-in time if unpaid.</small>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-checkout w-100 mt-4 rounded-pill shadow">
+                                CONFIRM & BOOK NOW
+                            </button>
+                            
+                            <p class="text-center mt-3 small text-muted">
+                                <i class="bi bi-shield-lock-fill me-1"></i> 256-bit SSL Encrypted
+                            </p>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const cashRadio = document.getElementById('pay_cash');
+        const cardRadio = document.getElementById('pay_card');
+        const warning   = document.getElementById('cash-warning');
+
+        function toggleWarning() {
+            warning.style.display = cashRadio.checked ? 'block' : 'none';
+        }
+
+        cashRadio.addEventListener('change', toggleWarning);
+        cardRadio.addEventListener('change', toggleWarning);
+    });
+</script>
+{% endblock %}

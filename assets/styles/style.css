@@ -1,0 +1,86 @@
+/* ============================= */
+/* GRANDORIA LUXURY ROOMS */
+/* ============================= */
+
+.room-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+  transition: all 0.35s ease;
+  border: 1px solid #f0ebe3;
+}
+
+.room-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 45px rgba(92,61,46,0.18);
+}
+
+.room-card img {
+  border-radius: 14px;
+  height: 220px;
+  object-fit: cover;
+  width: 100%;
+}
+
+.room-title {
+  color: #5c3d2e;
+  font-weight: 700;
+  font-size: 1.4rem;
+  margin-top: 15px;
+}
+
+.room-status {
+  font-size: 0.9rem;
+  color: #b68d40;
+  font-weight: 600;
+}
+
+.room-price {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #5c3d2e;
+}
+
+.btn-grandoria {
+  background: linear-gradient(135deg, #b68d40, #9e7a30);
+  color: #fff !important;
+  border-radius: 30px;
+  padding: 8px 18px;
+  border: none;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.btn-grandoria:hover {
+  background: linear-gradient(135deg, #9e7a30, #7e6124);
+  transform: scale(1.05);
+}
+
+.btn-outline-grandoria {
+  border: 2px solid #b68d40;
+  color: #5c3d2e;
+  border-radius: 30px;
+  padding: 6px 16px;
+  background: transparent;
+}
+
+.btn-outline-grandoria:hover {
+  background: #b68d40;
+  color: white;
+}
+
+/* Add New Room button */
+.add-room-btn {
+  background: linear-gradient(135deg, #5c3d2e, #3f281d);
+  color: #fff;
+  padding: 12px 30px;
+  border-radius: 40px;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(92,61,46,0.35);
+}
+
+.add-room-btn:hover {
+  background: #3f281d;
+  transform: translateY(-2px);
+}

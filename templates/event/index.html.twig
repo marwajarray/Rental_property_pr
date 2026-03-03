@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Événements{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row g-4">
+        {# On vérifie si la variable 'events' existe et contient des éléments #}
+        {% if events is defined and events|length > 0 %}
+            
+            {% for event in events %}
+                <div class="col-lg-6">
+                    <div class="amenity-card shadow-sm h-100 border-0 bg-white">
+                        
+                        {# Section Image #}
+                        <div class="amenity-image">
+                            {% if event.images is defined and event.images|length > 0 %}
+                                {# On récupère le premier élément de la collection d'images #}
+                                <img src="{{ asset('uploads/images/' ~ event.images|first.filename) }}" 
+                                     alt="{{ event.name|default('Événement') }}" 
+                                     class="img-fluid w-100" 
+                                     style="height: 280px; object-fit: cover;">
+                            {% else %}
+                                {# Image par défaut si aucune image n'est liée #}
+                                <img src="{{ asset('assets/img/apartment rental/default-event.webp') }}" 
+                                     alt="Image par défaut" 
+                                     class="img-fluid w-100" 
+                                     style="height: 280px; object-fit: cover;">
+                            {% endif %}
+                        </div>
+
+                        {# Section Contenu #}
+                        <div class="p-4">
+                            <h3 class="h5 mb-2">{{ event.name }}</h3>
+                            
+                            {# Exemple d'ajout de description ou date si disponible #}
+                            {% if event.description is defined %}
+                                <p class="text-muted small">{{ event.description|slice(0, 100) ~ '...' }}</p>
+                            {% endif %}
+
+                            <div class="mt-3">
+                                <a href="{{ path('app_event_show', {'id': event.id}) }}" class="btn btn-primary btn-sm">
+                                    Voir les détails
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+
+        {% else %}
+            {# Cas où la liste est vide #}
+            <div class="col-12 text-center py-5">
+                <div class="alert alert-light shadow-sm">
+                    <p class="mb-0">Aucun événement n'est disponible pour le moment.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

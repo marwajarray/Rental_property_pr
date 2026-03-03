@@ -1,0 +1,208 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        :root {
+            --accent-beige: #d2b48c;
+            --dark-blue: #1a252f;
+            --light-bg: #f8f9fa;
+        }
+
+        .profile-header-card {
+            background: white;
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            background: var(--accent-beige);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: var(--dark-blue);
+            position: relative;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--accent-beige);
+        }
+
+        .reservation-card {
+            border: 1px solid #eee;
+            border-radius: 15px;
+            transition: 0.3s;
+            background: white;
+        }
+
+        .reservation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .badge-status {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .table-custom {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+        }
+
+        .table-custom thead {
+            background: var(--dark-blue);
+            color: white;
+        }
+
+        .table-custom th {
+            padding: 1.2rem;
+            font-weight: 500;
+            border: none;
+        }
+
+        .table-custom td {
+            padding: 1.2rem;
+            vertical-align: middle;
+            border-color: #f1f1f1;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<main class="main bg-light pb-5">
+     <!-- Page Title -->
+    <div class="page-title light-background">
+      <div class="container d-lg-flex justify-content-between align-items-center">
+        <h1 class="mb-2 mb-lg-0">Profile</h1>
+        <nav class="breadcrumbs">
+          <ol>
+            <li><a href="{{ path('app_home') }}">Home</a></li>
+            <li><a href="#">Profile</a></li>
+          </ol>
+        </nav>
+      </div>
+    </div><!-- End Page Title -->
+<br><br>
+
+    <div class="container">
+        <div class="row g-4">
+            
+            {# --- SIDEBAR: USER INFO --- #}
+            <div class="col-lg-4">
+                <div class="profile-header-card p-4 text-center">
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="avatar-circle">
+                            {{ user.email|first|upper }}
+                        </div>
+                    </div>
+                    <h4 class="fw-bold mb-1">{{ user.email }}</h4>
+                    <p class="text-muted small mb-4">Member since {{ "now"|date("Y") }}</p>
+                    
+                    <div class="text-start border-top pt-3">
+                        <label class="info-label text-muted small text-uppercase fw-bold">Privileges</label>
+                        <div class="mt-2">
+                            {% for role in user.roles %}
+                                <span class="badge bg-light text-dark border me-1">{{ role|replace({'ROLE_': ''}) }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm p-4" style="border-radius: 20px;">
+                    <h6 class="fw-bold mb-3">Need Assistance?</h6>
+                    <p class="small text-muted">If you need to modify your personal data or cancel a reservation, please contact our support team.</p>
+                    <a href="#" class="btn btn-outline-beige btn-sm w-100">Contact Support</a>
+                </div>
+            </div>
+
+            {# --- MAIN CONTENT: RESERVATIONS --- #}
+            <div class="col-lg-8">
+                <h3 class="section-title">My Bookings</h3>
+
+                {% if reservations is empty %}
+                    <div class="text-center py-5 bg-white rounded-4 shadow-sm">
+                        <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>
+                        <p class="mt-3 text-muted">You haven't made any reservations yet.</p>
+                        <a href="{{ path('app_home') }}" class="btn btn-beige px-4">Browse Properties</a>
+                    </div>
+                {% else %}
+                    <div class="table-responsive table-custom">
+                        <table class="table mb-0">
+                            <thead>
+                                <tr>
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <th>Guest</th>
+                                    {% endif %}
+                                    <th>Property</th>
+                                    <th>Dates</th>
+                                    <th>Status</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for reservation in reservations %}
+                                    <tr>
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <td><small class="fw-bold">{{ reservation.user.email }}</small></td>
+                                        {% endif %}
+                                        <td>
+                                            <span class="text-dark fw-bold">
+                                                {{ reservation.property ? 'Property ' ~ reservation.property.number : 'N/A' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="small">
+                                                <i class="bi bi-arrow-right-short text-beige"></i> 
+                                                {{ reservation.dateArrivee|date('d M') }} - {{ reservation.dateDepart|date('d M, Y') }}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-status 
+                                                {% if reservation.statut == 'paid' %}bg-success-subtle text-success
+                                                {% elseif reservation.statut == 'pending_cash' %}bg-warning-subtle text-warning
+                                                {% elseif reservation.statut == 'cancelled' %}bg-danger-subtle text-danger
+                                                {% else %}bg-secondary-subtle text-secondary{% endif %}">
+                                                {{ reservation.statut|replace({'_': ' '})|title }}
+                                            </span>
+                                        </td>
+                                        <td class="fw-bold text-dark">${{ reservation.totalPrice }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

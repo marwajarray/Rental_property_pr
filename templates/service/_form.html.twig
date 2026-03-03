@@ -1,0 +1,61 @@
+
+{{ form_start(form) }}
+    <div class="row gy-4">
+        
+        {# Row 1: Name, Category, Price #}
+        <div class="col-md-4">
+            <label for="service_nom" class="form-label">Service Name</label>
+            {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'e.g., Luxury Spa'}}) }}
+            {{ form_errors(form.nom) }}
+        </div>
+
+        <div class="col-md-4">
+            <label for="service_category" class="form-label">Category</label>
+            {{ form_widget(form.category, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.category) }}
+        </div>
+
+        <div class="col-md-4">
+            <label for="service_price" class="form-label">Price</label>
+            {{ form_widget(form.price, {'attr': {'class': 'form-control', 'placeholder': '0.00'}}) }}
+            {{ form_errors(form.price) }}
+        </div>
+
+        {# Row 2: Location and Service Timing #}
+        <div class="col-md-3">
+            <label class="form-label">Location</label>
+            {{ form_widget(form.location, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Available Day</label>
+            {{ form_widget(form.day_of_week, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">Start Time</label>
+            {{ form_widget(form.start_time, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        <div class="col-md-3">
+            <label class="form-label">End Time</label>
+            {{ form_widget(form.end_time, {'attr': {'class': 'form-control'}}) }}
+        </div>
+
+        {# Row 3: Description #}
+        <div class="col-md-12">
+            <label for="service_description" class="form-label">Description</label>
+            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4, 'placeholder': 'Describe the service details...'}}) }}
+            {{ form_errors(form.description) }}
+        </div>
+
+
+        {# Submit Button #}
+        <div class="col-md-12 text-center">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> {{ button_label|default('Save Service') }}
+            </button>
+        </div>
+
+    </div>
+{{ form_end(form) }}
